@@ -1473,7 +1473,6 @@ const Monitor: React.FC = () => {
     };
 
     // Markdown 转 HTML 逐行解析器（支持标题/列表/表格/代码块/段落）
-    // @ts-expect-error TS6133 - legacy utility, pending cleanup
     const markdownToHtml = (md: string): string => {
         const lines = md.split('\n');
         const out: string[] = [];
