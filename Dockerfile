@@ -27,10 +27,6 @@ COPY requirements.prod.txt .
 # 安装 Python 依赖
 RUN pip install --no-cache-dir -r requirements.prod.txt
 
-# 安装 Playwright 浏览器
-RUN playwright install chromium
-RUN playwright install-deps chromium
-
 # 复制项目文件
 COPY . .
 
