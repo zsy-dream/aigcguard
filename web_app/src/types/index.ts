@@ -29,6 +29,8 @@ export interface WatermarkResult {
   psnr?: number;
   download_url?: string;
   asset_id?: number;
+  error?: string;
+  quota_deducted?: boolean;
   message: string;
 }
 

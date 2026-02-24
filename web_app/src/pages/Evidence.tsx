@@ -1,7 +1,8 @@
 import React from 'react';
-import { ShieldCheck, Download, XCircle, CheckCircle2, FileText, Loader2, Link, RefreshCw, FolderDown, Image, Video, FileType, Lock, Scale, Landmark, Fingerprint } from 'lucide-react';
+import { ShieldCheck, Download, XCircle, CheckCircle2, FileText, Loader2, Link, RefreshCw, FolderDown, Image, Video, FileType, Lock, Scale, Landmark, Fingerprint, Crown } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import JSZip from 'jszip';
 import AssetThumbnail from '../components/AssetThumbnail';
 import { auth, watermark } from '../services/api';
 import { useApp } from '../contexts/AppContext';
@@ -348,7 +349,7 @@ const Evidence: React.FC = () => {
 
         try {
             setExportProgress(prev => prev ? { ...prev, currentName: '正在打包 ZIP…' } : prev);
-            const blob = await zip.generateAsync({ type: 'blob' }, (meta) => {
+            const blob = await zip.generateAsync({ type: 'blob' }, (meta: any) => {
                 setExportProgress(prev => prev ? { ...prev, currentName: `打包中 ${meta.percent.toFixed(0)}%` } : prev);
             });
 
