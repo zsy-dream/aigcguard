@@ -26,10 +26,13 @@ cors_origins = [
     if origin.strip()
 ]
 
-if cors_origins:
+cors_origin_regex = (settings.BACKEND_CORS_ORIGIN_REGEX or "").strip() or None
+
+if cors_origins or cors_origin_regex:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
+        allow_origin_regex=cors_origin_regex,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

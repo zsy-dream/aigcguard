@@ -34,6 +34,11 @@ class Settings(BaseSettings):
         "http://localhost,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8888",
     )
 
+    BACKEND_CORS_ORIGIN_REGEX: str = os.environ.get(
+        "BACKEND_CORS_ORIGIN_REGEX",
+        "",
+    )
+
 settings = Settings()
 
 # 启动时校验 SECRET_KEY
