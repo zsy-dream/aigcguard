@@ -134,18 +134,32 @@ const Fingerprint: React.FC = () => {
     // NOTE: Removed the "clear on mount" effect that was causing state loss when navigating away and back
     // The result, file, and preview are now preserved across navigation
 
+    const getBackendOrigin = React.useCallback(() => {
+        const apiUrl = (import.meta as any)?.env?.VITE_API_URL || '';
+        if (!apiUrl) return '';
+        if (String(apiUrl).startsWith('/')) return '';
+        return String(apiUrl).replace(/\/api\/?$/, '');
+    }, []);
+
     const buildAuthedUrl = React.useCallback((rawUrl: string) => {
         const token = accessToken || '';
         if (!rawUrl) return rawUrl;
-        if (!token) return rawUrl;
+
+        const origin = getBackendOrigin();
+        let url = rawUrl;
+        if (url.startsWith('/') && origin) {
+            url = `${origin}${url}`;
+        }
+
+        if (!token) return url;
 
         // Only append token for our backend endpoints (they require token=... in query)
-        const needsToken = rawUrl.includes('/api/image/') || rawUrl.includes('/api/uploads/') || rawUrl.startsWith('/api/') || rawUrl.startsWith('/image/');
-        if (!needsToken) return rawUrl;
+        const needsToken = url.includes('/api/image/') || url.includes('/api/uploads/') || url.includes('/api/') || url.includes('/image/');
+        if (!needsToken) return url;
 
-        if (rawUrl.includes('token=')) return rawUrl;
-        return `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
-    }, [accessToken]);
+        if (url.includes('token=')) return url;
+        return `${url}${url.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
+    }, [accessToken, getBackendOrigin]);
 
     // Batch Mode State
     const batchFiles = state.batchFiles;
@@ -933,7 +947,7 @@ const Fingerprint: React.FC = () => {
                                                 {/* Actions */}
                                                 {item.status === 'done' && item.result?.download_url && (
                                                     <a
-                                                        href={`${item.result.download_url}?token=${localStorage.getItem('access_token') || ''}`}
+                                                        href={buildAuthedUrl(item.result.download_url)}
                                                         download
                                                         className="p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors"
                                                         title="下载"
