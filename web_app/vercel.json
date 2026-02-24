@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/health",
+      "destination": "https://api.aigcguard.zsypioneer.cn/health"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "https://api.aigcguard.zsypioneer.cn/api/$1"
     },
