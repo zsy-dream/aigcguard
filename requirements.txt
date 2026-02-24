@@ -1,0 +1,62 @@
+# Web Framework
+flask>=2.3.0
+flask-cors>=4.0.0
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+
+# Async Task Queue
+celery>=5.3.6
+redis>=5.0.1
+
+# Cloud Database (Supabase)
+supabase>=2.0.0
+
+# Image Processing & AI
+opencv-python
+numpy
+scipy
+PyWavelets
+imagehash>=4.3.1
+Pillow
+
+# Deep Learning
+torch
+torchvision
+onnxruntime>=1.16.3
+
+# Vector Search
+faiss-cpu>=1.7.4
+
+# Web Scraping
+scrapy>=2.11.0
+scrapy-redis>=0.7.3
+playwright>=1.41.0
+
+# Search Engine
+elasticsearch>=8.12.0
+
+# Object Storage
+minio>=7.2.3
+
+# PDF Generation
+reportlab>=4.0.9
+WeasyPrint>=60.0
+
+# Authentication & Security
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-dotenv>=1.0.0
+
+# Utilities
+pydantic>=2.5.3
+pydantic-settings>=2.1.0
+httpx>=0.26.0
+aiofiles>=23.2.1
+
+# Rate Limiting
+slowapi>=0.1.9
+
+# Monitoring
+prometheus-client>=0.19.0
+

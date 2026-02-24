@@ -1,0 +1,18 @@
+.env
+outputs/
+uploads/
+docs/
+__pycache__/
+*.py[cod]
+*.log
+node_modules/
+web_app/node_modules/
+.DS_Store
+.env.*
+
+# python venvs
+venv/
+.venv/
+
+# build outputs
+web_app/dist/
