@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 import os
 import secrets
 from typing import List
@@ -13,6 +13,7 @@ load_dotenv(dotenv_path=env_path)
 class Settings(BaseSettings):
     PROJECT_NAME: str = "AIGC 数字内容指纹嵌入与侵权全网监测平台"
     API_V1_STR: str = "/api"
+    model_config = SettingsConfigDict(case_sensitive=True, env_parse_delimiter=",")
     
     # SECURITY: SECRET_KEY 必须从环境变量读取，无默认值
     SECRET_KEY: str = os.environ.get("SECRET_KEY", "")
@@ -29,13 +30,11 @@ class Settings(BaseSettings):
     
     # CORS - 从环境变量读取，支持逗号分隔多个域名
     BACKEND_CORS_ORIGINS: List[str] = [
-        origin.strip()
-        for origin in os.environ.get("BACKEND_CORS_ORIGINS", "http://localhost,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8888").split(",")
-        if origin.strip()
+        "http://localhost",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8888",
     ]
-
-    class Config:
-        case_sensitive = True
 
 settings = Settings()
 
