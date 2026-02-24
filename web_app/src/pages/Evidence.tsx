@@ -41,16 +41,30 @@ const Evidence: React.FC = () => {
     const lastFetchAtRef = React.useRef(0);
     const lastErrorToastAtRef = React.useRef(0);
 
+    const getBackendOrigin = React.useCallback(() => {
+        const apiUrl = (import.meta as any)?.env?.VITE_API_URL || '';
+        if (!apiUrl) return '';
+        if (apiUrl.startsWith('/')) return '';
+        return String(apiUrl).replace(/\/api\/?$/, '');
+    }, []);
+
     const buildAuthedUrl = React.useCallback((rawUrl: string) => {
         const token = localStorage.getItem('access_token') || '';
         if (!rawUrl) return rawUrl;
-        if (!token) return rawUrl;
 
-        const needsToken = rawUrl.includes('/api/image/') || rawUrl.startsWith('/api/') || rawUrl.startsWith('/image/');
-        if (!needsToken) return rawUrl;
-        if (rawUrl.includes('token=')) return rawUrl;
-        return `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
-    }, []);
+        const origin = getBackendOrigin();
+        let url = rawUrl;
+        if (url.startsWith('/') && origin) {
+            url = `${origin}${url}`;
+        }
+
+        if (!token) return url;
+
+        const needsToken = url.includes('/api/image/') || url.includes('/api/') || url.includes('/image/');
+        if (!needsToken) return url;
+        if (url.includes('token=')) return url;
+        return `${url}${url.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
+    }, [getBackendOrigin]);
 
     const { pushToast } = useApp();
 
@@ -115,14 +129,10 @@ const Evidence: React.FC = () => {
 
     const handleDownload = async (asset: any) => {
         const id = asset?.id;
-        if (id == null) return;
+        if (!id) return;
         setDownloadingIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
         try {
-            const token = localStorage.getItem('access_token') || '';
-            const rawUrl = asset?.preview_url || '';
-            const url = rawUrl.startsWith('http')
-                ? rawUrl
-                : `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
+            const url = buildAuthedUrl(asset?.preview_url || '');
 
             const res = await fetch(url);
             if (!res.ok) {
@@ -304,9 +314,7 @@ const Evidence: React.FC = () => {
             try {
                 const rawUrl = asset?.preview_url || '';
                 if (!rawUrl) throw new Error('no url');
-                const url = rawUrl.startsWith('http')
-                    ? rawUrl
-                    : `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
+                const url = buildAuthedUrl(rawUrl);
                 const res = await fetch(url);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const blob = await res.blob();
@@ -518,12 +526,12 @@ const Evidence: React.FC = () => {
         if (asset.asset_type === 'text') {
             setViewLoading(true);
             try {
-                const url = `${asset.preview_url}?token=${localStorage.getItem('access_token') || ''}`;
+                const url = buildAuthedUrl(asset.preview_url);
                 const res = await fetch(url);
                 const text = await res.text();
                 setTextContent(text);
-            } catch (err) {
-                console.error(err);
+            } catch (e) {
+                setTextContent('');
                 setTextContent("无法加载文本内容");
             } finally {
                 setViewLoading(false);
