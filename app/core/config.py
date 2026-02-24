@@ -28,13 +28,11 @@ class Settings(BaseSettings):
     SUPABASE_KEY: str = os.environ.get("SUPABASE_KEY", "")
     SUPABASE_SERVICE_ROLE_KEY: str = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
     
-    # CORS - 从环境变量读取，支持逗号分隔多个域名
-    BACKEND_CORS_ORIGINS: List[str] = [
-        "http://localhost",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:8888",
-    ]
+    # CORS - 从环境变量读取，逗号分隔多个域名（在 app/main.py 中 split 解析，避免 pydantic 解析 List 时在某些平台报错）
+    BACKEND_CORS_ORIGINS: str = os.environ.get(
+        "BACKEND_CORS_ORIGINS",
+        "http://localhost,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8888",
+    )
 
 settings = Settings()
 
