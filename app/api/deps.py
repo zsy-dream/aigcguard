@@ -177,12 +177,26 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
                 )
             else:
                 # 记录不存在，自动创建
+                # 先从 Supabase auth 获取 user_metadata 中的 display_name
+                display_name_from_metadata = None
+                try:
+                    auth_user_res = sb.auth.admin.get_user_by_id(username)
+                    if auth_user_res and auth_user_res.user:
+                        metadata = auth_user_res.user.user_metadata or {}
+                        display_name_from_metadata = metadata.get('display_name')
+                except Exception as e:
+                    print(f"[Auth] Failed to fetch auth user metadata: {e}")
+                
                 # Role default to "user", but if it's admin@... give admin for testing if admin doesn't exist!
                 role = "admin" if email and "admin" in email else "user"
+                
+                # 优先使用 metadata 中的 display_name，其次用邮箱前缀
+                final_display_name = display_name_from_metadata or (email.split('@')[0] if email else username)
+                
                 new_profile = {
                     "id": username,
                     "username": email or username,
-                    "display_name": (email.split('@')[0] if email else username)[:20],
+                    "display_name": final_display_name[:20],
                     "role": role,
                     "plan": "free",
                     "quota_total": 50 if role == "admin" else 10,
@@ -190,7 +204,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
                     "created_at": datetime.now(timezone.utc).isoformat(),
                 }
                 sb.table("profiles").insert(new_profile).execute()
-                print(f"[Auth Auto-Create] Auto created profile for {email or username}")
+                print(f"[Auth Auto-Create] Auto created profile for {email or username} with display_name={final_display_name}")
                 return User(**new_profile)
     except Exception as e:
         print(f"[Auth Error] Failed to fetch or create user from Supabase: {e}")
