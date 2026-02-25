@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
@@ -54,6 +54,11 @@ async def health_check():
         "timestamp": datetime.now().isoformat(),
         "service": "aigc-copyright-api"
     }
+
+
+@app.head("/health")
+async def health_check_head():
+    return Response(status_code=200)
 
 # Static Files
 # app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
