@@ -99,6 +99,7 @@ export const auth = {
             email: username,
             password,
             options: {
+                emailRedirectTo: `${window.location.origin}/auth/callback`,
                 data: {
                     display_name: display_name || username.split('@')[0]
                 }

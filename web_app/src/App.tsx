@@ -6,6 +6,7 @@ import Monitor from './pages/Monitor';
 import Evidence from './pages/Evidence';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AuthCallback from './pages/AuthCallback';
 import Pricing from './pages/Pricing';
 import Admin from './pages/Admin';
 
@@ -23,6 +24,7 @@ function App() {
             <Route path="evidence" element={<Evidence />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="auth/callback" element={<AuthCallback />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="admin" element={<Admin />} />
             {/* Fallback */}

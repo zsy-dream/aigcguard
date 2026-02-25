@@ -80,6 +80,9 @@ const Register: React.FC = () => {
             const { error } = await supabase.auth.resend({
                 type: 'signup',
                 email: username,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                },
             } as any);
             if (error) throw error;
             setResendMessage('已重新发送验证邮件，请前往邮箱完成认证（如未收到请查看垃圾箱/广告邮件）。');
